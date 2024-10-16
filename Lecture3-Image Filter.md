@@ -131,7 +131,7 @@ $$
 \end{cases} 
 $$
 
-其中$f(m,n)$表示点$(m,n)$的像素值。
+其中 $f(m,n)$ 表示点 $(m,n)$ 的像素值。
 
 $\text{Inverse Gradient} \in (0,2]$。Inverse Gradient 值有如下特性：
 
@@ -172,6 +172,13 @@ $$
 \left\{
   \sum_{(m,n)\in\Omega_{ij}} \left(f(m,n)-\frac{1}{n}
   \sum_{(k,l)\in\Omega_{ij}} f(k,l)\right)^2
+\right\}
+\\
+\updownarrow
+\\
+\sigma^2 = \frac{1}{n}
+\left\{
+  \sum_{(m,n)\in\Omega_{ij}} \left(f(m,n)-\overline{f(k,l)\Bigg |_{(k, l)\in\Omega_{ij}}}\right)^2
 \right\}
 $$
 其中：
