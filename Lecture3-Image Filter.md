@@ -82,6 +82,10 @@ Differentiation: $\frac{f}{dx} (f * g) = \frac{df}{dx} *g = f *\frac{dg}{dx}$
 对于 $(N\times N)$ 的图片、$(K\times K)$ 的 Kernel，其计算复杂度为：
 
 - 每一个 Pixel，进行 $O(K^2)$ 个乘运算，和 $O(K^2-1)$ 个 summation
+  - 在 Kernel Apply 的时候，每个元素都会与每个 Kernel 元素相乘，即 $O(K^2)$ 个乘运算
+  - 但是考虑加法。完成乘法后，将所有结果相加以获得输出图像中该像素的最终值。  
+    但是，我们不需要将第一个乘法结果与其自身相加，而是从第二个结果开始相加。  
+    因此，加法运算的次数比内核中元素的总数少一。
 - 有 $N^2$ 个 Pixel
 - 即运算复杂度为 $N^2\cdot O(K^2) + N^2\cdot O(K^2-1) = O(N^2K^2)$
 
@@ -108,6 +112,22 @@ $$
 h(i, j) = h(i) * h(j)\\
 h(x)=\frac{1}{\sqrt{2\pi}\sigma}\exp{(-\frac{x^2}{2\sigma^2})}
 $$
+
+### General Decomposition
+
+对于卷积核 $M$，如果存在矩阵/向量 $A$ 和 $B$ 使得 $A*B = M$，那么：
+$$
+\text{Conv2D}(\text{img}, M)
+= \text{Conv2D}(\text{Conv2D}(\text{img}, A), B)
+= \text{Conv2D}(\text{Conv2D}(\text{img}, B), A)
+$$
+
+> $\text{Conv2D}(\text{Conv2D}(\text{img}, A), B)$ 应该等于 $\text{Conv2D}(\text{Conv2D}(\text{img}, B), A)$，这基于卷积运算的结合律。然而，在实际应用中，这个等式并不总是严格成立。主要有以下几个原因：
+>
+> 1. **填充（Padding）**： 不同的填充策略可能会影响结果。例如，如果在每次卷积后都应用"相同"填充，那么最终输出的尺寸可能会不同。
+> 2. **步长（Stride）**： 如果卷积操作涉及非单位步长，那么两次卷积的顺序可能会影响最终的输出尺寸和内容。
+
+实际应用: 在深度学习中,这种思想被应用于设计一些高效的网络结构，如**深度可分离卷积(Depthwise Separable Convolution)**。这种结构将标准的卷积操作分解为 **深度卷积(Depthwise Convolution)** 和 **逐点卷积(Pointwise Convolution)**，大大减少了计算量和参数数量。
 
 ## Structure Adaptive Filter
 
