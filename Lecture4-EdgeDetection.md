@@ -159,7 +159,7 @@ Magnitude 越高越可能为边缘，vice verse。
 
 > **Consider as Gradient Vector**
 >
-> 如果将图片梯度看作
+> 如果将图片梯度看作向量，则有：
 > $$
 > \nabla f = \begin{bmatrix} \frac{\part f}{\part x} \\ \frac{\part f}{\part y} \end{bmatrix}
 > = \begin{bmatrix} g_x\\g_y \end{bmatrix}
