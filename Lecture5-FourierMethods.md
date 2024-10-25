@@ -83,33 +83,33 @@ $$
 
 #### Are b, cos, sin Orthognal Basis?
 
-![](./img/Lec5/is-orthognal.png)
+<img width="50%" src="./img/Lec5/is-orthognal.png"/>
 
-![](./img/Lec5/Proof.png)
+<img width="70%" src="./img/Lec5/Proof.png"/>
 
 也可以用积化和差进行证明
 
-![](./img/Lec5/Valid-Basis.png)
+<img width="70%" src="./img/Lec5/Valid-Basis.png"/>
 
 通过上述函数，可以证明 b, cos, sin 为一个有效的正交基
 
 #### Back to Fourier Series
 
-![](./img/Lec5/Fourier-Real.png)
+<img width="70%" src="./img/Lec5/Fourier-Real.png"/>
 
 对于一个复数的级数，可以表述为
 
-![](./img/Lec5/Fourier-Complex.png)
+<img width="70%" src="./img/Lec5/Fourier-Complex.png"/>
 
 ### Space Comparison
 
-![](./img/Lec5/space.png)
+<img width="70%" src="./img/Lec5/space.png"/>
 
 ### Frequency & Time
 
-![](./img/Lec5/time-freq.png)
+<img width="70%" src="./img/Lec5/time-freq.png"/>
 
-![](./img/Lec5/time-freq-viz.png)
+<img width="60%" src="./img/Lec5/time-freq-viz.png"/>
 
 ## Forier Descriptor 傅里叶描述子
 
