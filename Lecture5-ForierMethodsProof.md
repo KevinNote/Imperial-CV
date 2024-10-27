@@ -4,7 +4,7 @@
 
 ## FT Different Forms & Euler Formula
 
-### Sin-cosine form
+### Sine-cosine form
 
 $$
 f(x)=\sum^\infty_{h=0} \left[a_h \cos\left(2\pi h\frac{x}{N}\right) + b_h \sin\left(2\pi h\frac{x}{N}\right)\right]\\
@@ -26,14 +26,15 @@ $$
 
 $$
 e^{i\theta} = \cos \theta + i\sin\theta\\
-\cos\theta=\frac{e^{i\theta} + e^{-i\theta}}{2}
+\cos\theta=\frac{e^{i\theta} + e^{-i\theta}}{2}\\
+\sin \theta=\frac{e^{i\theta} + e^{-i\theta}}{2i}
 $$
 
 ## Proof
 
-令 $\gamma = \frac{x}{N}, \Gamma = 2\pi h \gamma$
+令 $\gamma = 2\pi h \frac{x}{N}$
 
-### Sin-cosine form to Amplitude-phase form
+### Sine-cosine form to Amplitude-phase form
 
 考虑 Amplitude (Magnitude) 与 Phrase (Direction) 于 $h$ 时的定义：
 $$
@@ -53,9 +54,9 @@ $$
 带入 Sin-cons form
 $$
 \begin{align}
-& a_h \cos(\Gamma) + b_h \sin(\Gamma)
-\\ =& A_h \cos(\varphi_h) \cos(\Gamma) + A_h \sin(\varphi_h) \sin(\Gamma)
-\\ =& A_h[\cos(\varphi_h) \cos(\Gamma) + \sin(\varphi_h) \sin(\Gamma)]
+& a_h \cos(\gamma) + b_h \sin(\gamma)
+\\ =& A_h \cos(\varphi_h) \cos(\gamma) + A_h \sin(\varphi_h) \sin(\gamma)
+\\ =& A_h[\cos(\varphi_h) \cos(\gamma) + \sin(\varphi_h) \sin(\gamma)]
 \end{align}
 $$
 考虑三角恒等变换
@@ -65,10 +66,10 @@ $$
 则有
 $$
 \begin{align}
-& a_h \cos(\Gamma) + b_h \sin(\Gamma)
-\\ =& A_h[\cos(\varphi_h) \cos(\Gamma) + \sin(\varphi_h) \sin(\Gamma)]
-\\ =& A_h[\cos(\varphi_h -\Gamma)]
-\\ =& A_h[\cos(\Gamma-\varphi_h)]
+& a_h \cos(\gamma) + b_h \sin(\gamma)
+\\ =& A_h[\cos(\varphi_h) \cos(\gamma) + \sin(\varphi_h) \sin(\gamma)]
+\\ =& A_h[\cos(\varphi_h -\gamma)]
+\\ =& A_h[\cos(\gamma-\varphi_h)]
 \end{align}
 $$
 考虑完整 Series
@@ -83,30 +84,30 @@ $$
   $$
   而 $A_0 = |a_0|$，看似不成立，但是如考虑公式意义，则成立。
 
-  这是因为在傅里叶级数展开中，对于 $h\geq1$ 的项： $A_h\cos(\Gamma - \varphi_h)$ 的振幅 $A_h$ 实际上是原信号在该频率分量上峰-峰值的一半。
+  这是因为在傅里叶级数展开中，对于 $h\geq1$ 的项： $A_h\cos(\gamma - \varphi_h)$ 的振幅 $A_h$ 实际上是原信号在该频率分量上峰-峰值的一半。
 
   为了保持一致性，令系数为 $1/2$
 
 - $h\geq 1$，则有
   $$
-  f(x) = \frac{A_0}{2} + \sum_{h=1}^N A_h \cos(\Gamma - \varphi_h)
+  f(x) = \frac{A_0}{2} + \sum_{h=1}^N A_h \cos(\gamma - \varphi_h)
   $$
 
 $$
 \begin{align*} \square \end{align*}
 $$
 
-### Sin-cosine form to Exponential form
+### Sine-cosine form to Exponential form
 
 $$
 \begin{align*}
 \text{Given: }
-&f(x)=\sum^\infty_{h=0} [a_h \cos(\Gamma) + b_h \sin(\Gamma)]\\
+&f(x)=\sum^\infty_{h=0} [a_h \cos(\gamma) + b_h \sin(\gamma)]\\
 &e^{i\theta} = \cos \theta + i\sin\theta\\
 &\cos\theta=\frac{e^{i\theta} + e^{-i\theta}}{2}\\
 &\sin\theta=\frac{e^{i\theta} - e^{-i\theta}}{2i}\\
 \text{Want: }
-&f(x) = \sum^N_{h=-N} c_h e^{i\Gamma}
+&f(x) = \sum^N_{h=-N} c_h e^{i\gamma}
 \end{align*}
 $$
 
@@ -114,12 +115,12 @@ $$
 $$
 \begin{align}
 f(x)
-&=\sum^\infty_{h=0} [a_h \cos(\Gamma) + b_h \sin(\Gamma)]\\
-&= \sum_{h=0}^{\infty} \left[a_h\left(\frac{e^{i\Gamma} + e^{-i\Gamma}}{2}\right) + b_h\left(\frac{e^{i\Gamma} - e^{-i\Gamma}}{2i}\right)\right]
+&=\sum^\infty_{h=0} [a_h \cos(\gamma) + b_h \sin(\gamma)]\\
+&= \sum_{h=0}^{\infty} \left[a_h\left(\frac{e^{i\gamma} + e^{-i\gamma}}{2}\right) + b_h\left(\frac{e^{i\gamma} - e^{-i\gamma}}{2i}\right)\right]
 \\
-&= \sum_{h=0}^{\infty} \left[\frac{a_h}{2}\left(e^{i\Gamma} + e^{-i\Gamma}\right) + \frac{b_h}{2i}\left(e^{i\Gamma} - e^{-i\Gamma}\right)\right]
+&= \sum_{h=0}^{\infty} \left[\frac{a_h}{2}\left(e^{i\gamma} + e^{-i\gamma}\right) + \frac{b_h}{2i}\left(e^{i\gamma} - e^{-i\gamma}\right)\right]
 \\
-&= \sum_{h=0}^{\infty} \left[\left(\frac{a_h}{2} + \frac{b_h}{2i}\right)e^{i\Gamma} + \left(\frac{a_h}{2} - \frac{b_h}{2i}\right)e^{-i\Gamma}\right]
+&= \sum_{h=0}^{\infty} \left[\left(\frac{a_h}{2} + \frac{b_h}{2i}\right)e^{i\gamma} + \left(\frac{a_h}{2} - \frac{b_h}{2i}\right)e^{-i\gamma}\right]
 \end{align}
 $$
 定义：
@@ -136,10 +137,14 @@ $$
 $$
 \begin{align}
 f(x)
-&= \sum_{h=0}^{\infty} \left[\left(\frac{a_h}{2} + \frac{b_h}{2i}\right)e^{i\Gamma} + \left(\frac{a_h}{2} - \frac{b_h}{2i}\right)e^{-i\Gamma}\right]
+&= \sum_{h=0}^{\infty} \left[\left(\frac{a_h}{2} + \frac{b_h}{2i}\right)e^{i\gamma} + \left(\frac{a_h}{2} - \frac{b_h}{2i}\right)e^{-i\gamma}\right]
 \\
-&= \sum_{h=0}^{\infty} \left[c_h e^{i\Gamma} + c_{-h} e^{-i\Gamma}\right]
+&= \sum_{h=0}^{\infty} \left[c_h e^{i\gamma} + c_{-h} e^{-i\gamma}\right]
 \\
-&= \sum_{h=-\infty}^{\infty} c_h e^{i\Gamma}
+&= \sum_{h=-\infty}^{\infty} c_h e^{i\gamma}
 \end{align}
+$$
+
+$$
+\begin{align*} \square \end{align*}
 $$
