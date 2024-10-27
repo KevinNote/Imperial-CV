@@ -174,6 +174,22 @@ $$
 ### Cosine/Sine Transform
 
 > DCT, DST 都是 DFT 的特殊形式。DFT 使用复指数函数作为基函数，DCT只是用 cos，DST则只是用 sin。
+>
+> 具体来说，DFT可以表示为
+> $$
+> X[k] = \sum_{n=0}^{N-1} x[n]e^{-j2\pi k\frac{n}{N}}, \quad k = 0,1,...,N-1
+> $$
+> 使用欧拉公式展开复指数：
+> $$
+> e^{-j2πk\frac{n}{N}} = \underbrace{\cos(2πkn/N)}_{实部} - \underbrace{j\cdot\sin(2πkn/N)}_{虚部}
+> $$
+>
+> 因此DFT的结果可以分为实部和虚部：
+> $$
+> X[k] = \Re{X[k]} + j\Im{X[k]}
+> $$
+> 当输入信号 $x[n]$ 是实数且具有偶对称性时，DFT的虚部会变为零，此时DFT就简化为只包含余弦项的DCT。
+> 当输入信号 $x[n]$ 是实数且具有奇对称性时，DFT的实部会变为零，此时DFT就简化为只包含正弦项的DST。
 
 考虑信号：
 $$
@@ -302,7 +318,7 @@ IFT 被定义为：
 
 由于正弦和余弦函数的 Symmetry，$u$ 为负值时 Spectrum is well defined
 
-> 考虑 $\cos$ 为偶函数，$\sin$ 为奇函数。在傅里叶变换中,当我们把一个实函数 f(t) 变换到频域 F(u) 时:
+> 考虑 $\cos$ 为偶函数，$\sin$ 为奇函数。在傅里叶变换中,当我们把一个实函数 $f(t)$ 变换到频域 $F(u)$ 时:
 >
 > - $F(u)$ 可以表示为实部(余弦项)和虚部(正弦项)的组合
 > - $F(u) = R(u) + jI(u)$
@@ -355,7 +371,7 @@ IFT 被定义为：
 <img width="60%" src="./img/Lec5/scaling.png"/>
 
 缩放对象会以相同的 Factor 改变所有 Component 的 Magnitude
-如果 Spectrum  的 Magnitude 被 Normalised，使得其最大值等于1，则该归一化频谱与对象大小无关。
+如果 Spectrum 的 Magnitude 被 Normalised，使得其最大值等于1，则该归一化频谱与对象大小无关。
 
 ### Noise
 

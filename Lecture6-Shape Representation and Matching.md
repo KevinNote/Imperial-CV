@@ -170,11 +170,11 @@ $$
 
 二阶矩给我们一个用来衡量物体分布 Spread（散布/展开）程度的度量
 
-我们可以从两个分量来看待这个问题：$x$ 方向的二阶矩（$p=2,q=0$）和 $y$ 方向的二阶矩（$p=0,q=2$）
+我们可以从两个分量来看待这个问题：$x$ 方向的二阶矩（$p=0,q=2$）和 $y$ 方向的二阶矩（$p=2,q=0$）
 $$
-\mu_\text{x direction}=\mu_{20} = \int^\infty_{-\infty}\int^\infty_{-\infty} (x-x_c)^2 f(x, y)dxdy
+\mu_\text{y direction}=\mu_{20} = \int^\infty_{-\infty}\int^\infty_{-\infty} (x-x_c)^2 f(x, y)dxdy
 \\
-\mu_\text{y direction}=\mu_{02} = \int^\infty_{-\infty}\int^\infty_{-\infty} (y-y_c)^2 f(x, y)dxdy
+\mu_\text{x direction}=\mu_{02} = \int^\infty_{-\infty}\int^\infty_{-\infty} (y-y_c)^2 f(x, y)dxdy
 $$
 <img width="40%" src="./img/lec6/image-20241027002934318.png"/>
 
