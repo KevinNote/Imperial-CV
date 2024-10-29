@@ -329,6 +329,17 @@ $$
 >
 > - $P$ 是特征矩阵
 > - $\Lambda$ 是特征值矩阵
+>
+> 即
+> $$
+> \mathbf{M} = P
+> \begin{bmatrix}
+> \lambda_1 & 0 \\
+> 0 & \lambda_2
+> \end{bmatrix}
+> P^T
+> $$
+> 
 
 <img src="./img/lec7/v2-113487e88f963ed32ffb1596073d9492_1440w.webp" style="width:70%;" />
 
@@ -417,10 +428,147 @@ $$
 
 
 
-> Extra Materia
+### 旋转
+
+> Harris 对旋转不敏感。
+
+考虑图像旋转 $R$，即
+$$
+M' = R M R^{T}\\
+R = \begin{bmatrix}
+\cos \theta & -\sin\theta\\
+\sin \theta & \cos \theta
+\end{bmatrix}
+$$
+
+> **为什么旋转是 $RMR^T$ 而不是 $RM$**
 >
-> 如果我们思考
+> 考虑 $M$ 的定义：
 > $$
+> \begin{align}
+> M &= \sum_{x, y \in W}
+> \begin{bmatrix}
+> I_{xx} &I_{xy}\\
+> I_{yx} & I_{yy}
+> \end{bmatrix}
+> \\& = \sum_{x, y \in W}
+> \begin{bmatrix}
+> I_x\\I_g
+> \end{bmatrix}
+> \begin{bmatrix}
+> I_x&I_g
+> \end{bmatrix}
+> \\& = \sum_{x, y \in W}
+> \nabla I
+> (\nabla I) ^T
+> \end{align}
+> $$
+> 如考虑旋转 $R$，则其会作用在 $x, y$ 梯度 $\nabla I$ 上，即
+> $$
+> \begin{align}
+> M & = \sum_{x, y \in W}
+> \nabla I
+> (\nabla I) ^T
+> \\
+> M' & = \sum_{x, y \in W}
+> (R\nabla I)
+> (R\nabla I) ^T
+> \\ &=  \sum_{x, y \in W}
+> R\nabla I
+> (R\nabla I^T) R^T
+> \\ &=  R\left[\sum_{x, y \in W}
+> \nabla I
+> (R\nabla I^T) \right] R^T
+> \\&= RMR^T
+> \end{align}
+> $$
+
+如令原矩阵：
+$$
+Mv = \lambda v
+$$
+考虑 $M'$ 的向量为 $Rv$，则有
+$$
+\begin{align}
+M'(Rv) &= RMR^T(Rv)\\
+&= RM(R^TRv)\\
+&= RMv\\
+&= R\lambda v\\
+&= \lambda(Rv)\\
+
+\end{align}
+$$
+即 $Rv$ 是新的特征向量。特征值并没有发生改变，而其特征向量发生了旋转。
+
+### 尺度变换
+
+> Harris 对尺度变换敏感
+
+考虑 $M$ 的变形：
+$$
+\begin{align}
+M &= \sum_{x, y \in W}
+\begin{bmatrix}
+I_{xx} &I_{xy}\\
+I_{yx} & I_{yy}
+\end{bmatrix}
+\\& =
+\sum_{x, y \in W}
+\begin{bmatrix}
+I_{x}^2 &  I_{x}I_y\\
+I_{y}I_x &  I_{y}^2
+\end{bmatrix}
+\end{align}
+$$
+对于尺寸变换 $\phi$ 来说，坐标被映射为：
+$$
+(x, y) \mapsto (\phi x, \phi y)
+$$
+考虑链式法则
+$$
+I_{x_\text{new}} = \frac{\part I}{\part x_\text{new}}\frac{\partial x_\text{new}}{\partial x} = \frac{1}{\phi} I_x\\
+I_{y_\text{new}} = \frac{1}{\phi} I_y
+$$
+令 $\Phi =\phi^{-2}$因此则有
+$$
+\begin{align}
+M & =
+\sum_{x, y \in W}
+\begin{bmatrix}
+I_{x}^2 &  I_{x}I_y\\
+I_{y}I_x &  I_{y}^2
+\end{bmatrix}
+\\
+M' & =
+\sum_{x, y \in W}
+\begin{bmatrix}
+\Phi I_{x}^2 &  \Phi I_{x}I_y\\
+\Phi I_{y}I_x & \Phi I_{y}^2
+\end{bmatrix}
+\\
+&=\Phi
+\sum_{x, y \in W}
+\begin{bmatrix}
+I_{x}^2  & I_{x}I_y\\
+I_{y}I_x & I_{y}^2
+\end{bmatrix}
+\end{align}
+$$
+若考虑响应函数：
+$$
+\begin{align}
+R &=\det \mathbf{M}- k(\text{tr}^2 \mathbf{M})\\
+R_{\phi}&= \det (\Phi \mathbf{M})- k(\text{tr}^2 (\Phi \mathbf{M}))\\
+&= \Phi^2\det \mathbf{M}- \Phi^2 k(\text{tr}^2  \mathbf{M})\\
+R_{\phi} &= \Phi^2 R
+\end{align}
+$$
+这意味着同一个角点在不同尺度下的响应值会发生变化。
+
+### Extra Material
+
+> 如果我们思考
+>$$
 > \begin{align}
 > \mathbf{M} &= \sum_{x, y} w(x, y)
 > \begin{bmatrix}
