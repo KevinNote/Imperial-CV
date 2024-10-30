@@ -569,6 +569,19 @@ $$
 
 > 参阅 https://medium.com/jun94-devpblog/cv-11-scale-invariant-local-feature-extraction-1-auto-scale-selection-265049027bf1
 
+> 自动尺度选择可以应用于单张图片和两张图片的情况：
+>
+> 单张图片：
+>
+> - 主要用于特征点检测和尺度估计
+> - 帮助找到图像中稳定的特征点及其特征尺度
+>
+> 两张图片：
+>
+> - 用于特征匹配
+> - 通过在两张图片中分别找到特征点及其尺度
+> - 再利用尺度信息进行特征描述和匹配
+
 ![](./img/lec7/0*ikFB6TqoZ_L5Pm0g.png)
 
 我们已经用数学证明了 Harris Corner Detector 对 Scale 敏感，直观描述为上图。
@@ -585,7 +598,7 @@ Harris 算子返回角点所在 Interest Point。但是，为了定义兴趣点�
 
 <img src="./img/lec7/1*ZlDPp83Dy5K1T_oSpTyJ7w.png" style="width:50%;" />
 
-设计一个函数取该店周边区域，*并根据该区域将其响应输出为标量。*此**签名函数*的变化输入不是点***(x,y) ，而是点***(x,y)***周围区域的大小。因此，我们可以将签名函数视为一幅图像中某个点的区域大小（或图像块宽度）的函数。
+设计一个函数取该点周边区域，*并根据该区域将其响应输出为标量。*此**签名函数输入是点**$(x,y)$周围区域的大小。因此，我们可以将签名函数视为一幅图像中某个点的区域大小（或图像块宽度）的函数。
 
 <img src="./img/lec7/1*hGLRvNdjFdexynuz8CBwrw.png" style="width:80%;" />
 
@@ -593,19 +606,106 @@ Harris 算子返回角点所在 Interest Point。但是，为了定义兴趣点�
 
 <img src="./img/lec7/1*5-u71a9n1-E93tV2WhqfIg.png" style="width:80%;"/>
 
-#### Signature Function: LoG
+> **注解**
+>
+> 即在通过一些核，对这个 Interest Windows 进行卷积。进行的卷积应该满足在不同尺度下拥有一个局部最大值。
+>
+> 如果对 $L, R$ 两个相同区域的图，但是尺度不同都进行对应的卷积，其结果应该为两个拥有 Local Maxima 的图。而这两个 Local Maxima 即对应的相同尺度。
+>
+> ~~俗称：刻舟求剑（x）~~
+>
+> 而绝大多数的尺度签名函数也不是通过缩放图片尺度进行卷积，而是通过缩放其核的 $\sigma$ 参数而进行的（即 LoG 和 DoG 其进行的 Smoothing）。
+
+> **工作流程**
+>
+> 假设图片为 L, R. Harris 角点检测器在 L 上运行后获得了 $(x, y)$ 作为 interest point
+>
+> 1. 在 $L$ 图像上使用Harris角点检测器检测出兴趣点(x,y)
+>
+> 2. 在不同尺度 $\sigma$ 下计算该点的特征响应函数 $f(I(x,\sigma))$：
+>    每个尺度$\sigma$ 生成一个 $n\times n$ 响应图，从每个响应图中提取 $(x,y)$ 位置的值
+>
+>    这些值构成了特征响应函数曲线
+>
+>    - 对 $L$ 图像在点 $(x,y)$ 周围以 $\sigma$ 为尺度提取特征
+>
+>    - 对 $R$ 图像在对应位置 $(x',y')$ 周围以 $\sigma$ 为尺度提取特征
+>
+> 3. 绘制响应函数曲线：
+>
+> - 横轴为尺度 $\sigma$
+> - 纵轴为特征响应值
+>
+> 4. 寻找局部最大值：
+>
+> - 在响应曲线上找到局部极大值点
+> - 对应的 $\sigma$ 值即为该特征点的特征尺度
+
+### Signature Function: LoG
+
+> LoG是二阶微分算子，对尺度变化有归一化响应，具有尺度不变性
+> $$
+> \begin{align}
+> G(x, y) &= e ^{-\frac{x^2+y^2}{2\sigma^2}}
+> \\
+> \nabla^2 G(x, y)&=
+> \frac{\part^2 G(x, y)}{\part x^2} +
+> \frac{\part^2 G(x, y)}{\part y^2}
+> \\
+> &= 
+> \left(\frac{x^2 + y^2 - 2\sigma^2}{\sigma^4}  \right)e^{-\frac{x^2+y^2}{2\sigma^2}}
+> \end{align}
+> $$
+> 考虑尺度变化 $k$
+> $$
+> (x, y) \mapsto (kx, ky)\\I(x, y) = I'(kx, ky)
+> $$
+> 考虑原始高斯尺度
+> $$
+> G(x, y) = e ^{-\frac{x^2+y^2}{2\sigma^2}}
+> $$
+> 有
+> $$
+> G(x, y \mid \sigma) = G(kx, ky \mid k\sigma)
+> $$
+> 而对于标准 LoG
+> $$
+> LoG(x,y\mid\sigma) = \nabla^2 G(x, y)
+> = 
+> \left(\frac{x^2 + y^2 - 2\sigma^2}{\sigma^4}  \right)e^{-\frac{x^2+y^2}{2\sigma^2}}
+> $$
+> 随着 $\sigma$ 增大， LoG 会下降。
+>
+> 如果进行 $\sigma^2$ 进行归一化
+> $$
+> \begin{align}
+> LoG_\text{n}(x,y\mid\sigma) &= \sigma^2 LoG_\text{n}(x,y\mid\sigma)
+> \\ &= \sigma^2 \nabla^2 G(x, y)
+> \\&= 
+> \left(\frac{x^2 + y^2 - 2\sigma^2}{\sigma^2}  \right)e^{-\frac{x^2+y^2}{2\sigma^2}}
+> \end{align}
+> $$
+> 而归一化后的 $LoG$ 对于尺度，可以证明：
+> $$
+> \begin{align}
+> LoG_\text{n}(x,y\mid\sigma) &= LoG_\text{n}(x, y \mid k\sigma)
+> \end{align}
+> $$
+> 保证了同一特征在不同尺度下会得到相同的响应值。
 
 <img src="./img/lec7/1*pEbxpmbEe1NGKLJThdWmRw.png" style="width:67%;" />
 
 
 
-它可以检测输入图像中的“**斑点**”并返回其周围的最高响应。要理解为什么会出现这种情况，请考虑过滤器的性质。过滤器具有其设计用于检测的形状，当输入与过滤器的外观相同时，它们会输出最大响应。在*LoG*过滤器的中心周围，我们可以找到一个斑点，这就是*LoG*是斑点检测器的原因
+LoG 可以检测输入图像中的“**斑点**”并返回其周围的最高响应。
 
-***我们通过应用具有不同尺度𝝈的LoG滤波器来寻找图像中的斑点作为局部特征及其对应的合适尺度，\***
+过滤器具有其设计用于检测的形状，当输入与过滤器的外观相同时，它们会输出最大响应。在*LoG*过滤器的中心周围，我们可以找到一个斑点，这就是*LoG*是斑点检测器的原因
+
+***我们通过应用具有不同尺度 $\sigma$ 的LoG 核来寻找图像中的斑点作为局部特征及其对应的合适尺度。***
 
 <img src="./img/lec7/1*HZjqpKUelnOJktzGM1muCQ.png" style="width:67%;" />
 
-
+相似的情况也适用于 DoG。
 
 ## Extra Material
 

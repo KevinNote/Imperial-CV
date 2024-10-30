@@ -445,7 +445,7 @@ $$
 \text{Marr-Hildreth} = \text{Gaussian Filter} + \text{Laplacian}
 $$
 
-考虑 拉普拉斯对噪音非常敏感，因此使用高斯核先进行 smoothing，在使用 Laplacian 作为 criterion。
+考虑拉普拉斯对噪音非常敏感，因此使用高斯核先进行 smoothing，在使用 Laplacian 作为 criterion。
 
 1. $n\times n$ 的高斯 Lowpass 核 进行 smoothing
 2. 计算图片的 Laplacian
@@ -473,7 +473,6 @@ $$
 
 > **Mathematics behind LoG**
 > $$
-> \\
 > \begin{align}
 > G(x, y) &= e ^{-\frac{x^2+y^2}{2\sigma^2}}
 > \\
