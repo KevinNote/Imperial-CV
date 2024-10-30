@@ -565,7 +565,7 @@ R_{\phi} &= \Phi^2 R
 $$
 这意味着同一个角点在不同尺度下的响应值会发生变化。
 
-### Auto Scale Selection: from Scale Varient to Scale Invarient
+## Auto Scale Selection: from Scale Varient to Scale Invarient
 
 > 参阅 https://medium.com/jun94-devpblog/cv-11-scale-invariant-local-feature-extraction-1-auto-scale-selection-265049027bf1
 
@@ -607,7 +607,7 @@ Harris 算子返回角点所在 Interest Point。但是，为了定义兴趣点�
 
 
 
-### Extra Material
+## Extra Material
 
 > 如果我们思考
 >$$
