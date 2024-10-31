@@ -172,7 +172,7 @@ Magnitude 越高越可能为边缘，vice verse。
 
  ### Gradient Direction
 
-![](./img/lec4/grad-dir.png)
+<img src="./img/lec4/grad-dir.png" style="width:80%;" />
 
 考虑 $h_x$ 为 $x$ 轴的梯度，$h_y$ 为 $y$ 轴的梯度，我们可以获得梯度方向：
 $$
