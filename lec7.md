@@ -582,7 +582,7 @@ $$
 > - 通过在两张图片中分别找到特征点及其尺度
 > - 再利用尺度信息进行特征描述和匹配
 
-![](./img/lec7/0*ikFB6TqoZ_L5Pm0g.png)
+![](./img/lec7/0_ikFB6TqoZ_L5Pm0g.png)
 
 我们已经用数学证明了 Harris Corner Detector 对 Scale 敏感，直观描述为上图。
 
@@ -590,21 +590,21 @@ $$
 
 Harris 算子返回角点所在 Interest Point。但是，为了定义兴趣点的特征描述（特征向量表示），并比较图像之间的点，我们需要的不仅仅是一个兴趣点，还需要它周围的区域。
 
-<img src="./img/lec7/1*bZ0CltC5Cn6FRR58Dpxw3A.png" style="width:50%;" />
+<img src="./img/lec7/1_bZ0CltC5Cn6FRR58Dpxw3A.png" style="width:50%;" />
 
 通过使用从兴趣点周围区域提取的特征表示，我们可以比较和测量两个图像区域彼此的相似程度。
 
 现在的问题是，考虑到 Harris 和 Hessian 不是尺度不变的，**如何为兴趣点周围的各个区域选择正确的 Scale？**
 
-<img src="./img/lec7/1*ZlDPp83Dy5K1T_oSpTyJ7w.png" style="width:50%;" />
+<img src="./img/lec7/1_ZlDPp83Dy5K1T_oSpTyJ7w.png" style="width:50%;" />
 
 设计一个函数取该点周边区域，*并根据该区域将其响应输出为标量。*此**签名函数输入是点**$(x,y)$周围区域的大小。因此，我们可以将签名函数视为一幅图像中某个点的区域大小（或图像块宽度）的函数。
 
-<img src="./img/lec7/1*hGLRvNdjFdexynuz8CBwrw.png" style="width:80%;" />
+<img src="./img/lec7/1_hGLRvNdjFdexynuz8CBwrw.png" style="width:80%;" />
 
 该函数的局部最大值是一个强有力的线索，表明与局部最大值相对应的区域大小应该与图像尺度不变
 
-<img src="./img/lec7/1*5-u71a9n1-E93tV2WhqfIg.png" style="width:80%;"/>
+<img src="./img/lec7/1_5-u71a9n1-E93tV2WhqfIg.png" style="width:80%;"/>
 
 > **注解**
 >
@@ -693,7 +693,7 @@ Harris 算子返回角点所在 Interest Point。但是，为了定义兴趣点�
 > $$
 > 保证了同一特征在不同尺度下会得到相同的响应值。
 
-<img src="./img/lec7/1*pEbxpmbEe1NGKLJThdWmRw.png" style="width:67%;" />
+<img src="./img/lec7/1_pEbxpmbEe1NGKLJThdWmRw.png" style="width:67%;" />
 
 
 
@@ -703,7 +703,7 @@ LoG 可以检测输入图像中的“**斑点**”并返回其周围的最高响
 
 ***我们通过应用具有不同尺度 $\sigma$ 的LoG 核来寻找图像中的斑点作为局部特征及其对应的合适尺度。***
 
-<img src="./img/lec7/1*HZjqpKUelnOJktzGM1muCQ.png" style="width:67%;" />
+<img src="./img/lec7/1_HZjqpKUelnOJktzGM1muCQ.png" style="width:67%;" />
 
 相似的情况也适用于 DoG。
 
