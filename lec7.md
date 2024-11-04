@@ -409,7 +409,7 @@ $$
 
 ### Shi-Tomasi Corner Detector
 
-<img src="./img/lec7/image-20241029032646303.png" alt="" style="zoom:50%;" />
+<img src="./img/lec7/image-20241029032646303.png" alt="" style="width:80%;" />
 
 STCD 将 HCD 的反馈函数改写为
 $$
@@ -582,7 +582,7 @@ $$
 > - 通过在两张图片中分别找到特征点及其尺度
 > - 再利用尺度信息进行特征描述和匹配
 
-![](./img/lec7/0_ikFB6TqoZ_L5Pm0g.png)
+<img src="./img/lec7/0_ikFB6TqoZ_L5Pm0g.png" style="width:50%;" />
 
 我们已经用数学证明了 Harris Corner Detector 对 Scale 敏感，直观描述为上图。
 
