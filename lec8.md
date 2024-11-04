@@ -298,6 +298,8 @@ $$
 
 ### Feature Descriptor Distance
 
+可以使用以下任意距离来比较两个特征描述符 x 和 y：
+
 Quadratic Distance
 $$
 D(\mathbf{x}, \mathbf{y}) = \sum^n_{i=1}| x_i - y_i|^2
@@ -315,7 +317,7 @@ $$
 
 #### Fixed Distance Threshold
 
-![](./img/lec8/image-20241031044825562.png)
+<img src="./img/lec8/image-20241031044825562.png" style="width:50%;" />
 
 在Fixed Distance Threshold 下（虚线圆圈），描述符 $D_A$ 无法匹配 $D_B$，而 $D_D$ 则无法正确匹配 $D_C$ 和 $D_E$。
 
@@ -328,7 +330,7 @@ $$
 
 #### Nearest Neighbour
 
-![](./img/lec8/image-20241031044825562.png)
+<img src="./img/lec8/image-20241031044825562.png" style="width:50%;" />
 
 使用 NN，描述子 $D_A$ 正确匹配了 $D_B$ ，但是 $D_D$ 错误匹配了 $D_C$。
 
@@ -338,7 +340,7 @@ $$
 
 #### Nearest Neighbour Distance Ratio
 
-![](./img/lec8/image-20241031044825562.png)
+<img src="./img/lec8/image-20241031044825562.png" style="width:50%;" />
 
 使用 NNDR 进行匹配时，描述符会正确地将 $D_A$ 与 $D_B$ 匹配，并正确地拒绝 $D_D$ 的匹配。
 
