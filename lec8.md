@@ -1,36 +1,41 @@
 # Lecture 8: SIFT
 
-## Gaussian Pyramid
+[TOC]
 
-> 参阅 https://jiangren.work/2019/08/10/%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94%E4%B8%8E%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/
+## Future Descriptor
 
-高斯金字塔本质上是信号的在不同尺度上的表达，即将同一图片多次进行高斯模糊，并向下采样，产生不同尺度下的多组信号或图片以进行后续的处理。
+要获得良好的图像特征，我们需要图像的 **Locality**（小区域对视图相关变形的敏感度较低）、**Invarience**（scale, orientation, deformation）、**Repeatability**（可重复识别相同点，这是图像序列跟踪的要求）和**Distinctiveness**（确保高灵敏度和特异性）。
 
-![img](./img/lec8/20191217150618.png)
+大多数特征描述符可视为 Template、Histograms（直方图/计数）或组合。
 
-对于层级 $G_{i+1}$ 的金子塔，有：
+| 理想的 Descriptor                                 | 大多数可用的 Descriptor        |
+| ------------------------------------------------- | ------------------------------ |
+| Robust and Distinctive<br />Compact and Efficient | 捕捉纹理信息<br />很少使用颜色 |
 
-1. 对 $G_i$ 进行 Gaussian Smooth
-2. 将所有偶数行、列去除
-   例如，如果原图像有8行，标号为0,1,2,3,4,5,6,7，则保留1,3,5,7行，去除0,2,4,6行
-   <center><img src="./img/lec8/20191217151040.png" /></center>
-
-因此得到的新图像长宽都变少 $50%$，即大小为原来的 $1/4$。重复可得到整个金字塔。
-
-## SIFT 尺度不变特征变换
+## SIFT Descriptor 尺度不变特征变换
 
 > 参阅 https://www.youtube.com/watch?v=NPcMS49V5hg
 
-### 步骤
+### Steps Overview
 
 1. **Scale-space Extrema Detection**
-   使用 DOG 检测有 Interesting Points
+   使用 DOG 检测 Interesting points
 2. **Keypoint Localisation**
    确定每个 Candidate Location 的 Location 和 Scale，并根据稳定性选择它们。
 3. **Orientation Estimation**
    使用局部图像梯度为每个定位的 Keypint 分配方向(Orientation)。保留每个特征的 theta、scale和 location。
 4. **Keypoint Descriptor**
    提取 Keypoint 周围选定尺度的局部图像梯度，并形成不受局部形状变形 (distortion)和光照影响 (illumination)的 representation。
+
+
+
+### Step 1: Scale Space Extrema Detection
+
+#### Gaussian Pyramid
+
+> 参阅 https://jiangren.work/2019/08/10/%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94%E4%B8%8E%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/
+>
+> 参阅 https://www.bilibili.com/video/BV13v411E7M7/
 
 高斯核是唯一可以产生多尺度（依赖 $\sigma$）的核。
 
@@ -42,22 +47,238 @@ $$
 $$
 L(x, y, \sigma) = G(x, y, \sigma) * I(x, y)
 $$
+高斯金字塔本质上是信号的在不同尺度上的表达，即将同一图片多次进行高斯模糊，并向下采样，产生不同尺度下的多组信号或图片以进行后续的处理。
+
+<img src="./img/lec8/20191217150618.png" alt="img" style="width:50%;" />
+
+对于层级 $G_{i+1}$ 的金子塔，有：
+
+1. **高斯平滑：**对 $G_i$ 进行 Gaussian Smooth
+
+2. **降采样：**将所有偶数行、列去除
+   例如，如果原图像有8行，标号为0,1,2,3,4,5,6,7，则保留1,3,5,7行，去除0,2,4,6行
+
+   <center><img src="./img/lec8/20191217151040.png" /></center>
+
+因此得到的新图像长宽都变少 $50\%$，即大小为原来的 $1/4$。重复可得到整个金字塔。
+
+如果进行降采样可能会导致平滑不连续。
+
+Octave 表示每一幅图像，可以产生几阶。而 $S$ 表示每阶产生多少层（通常3-5）
+$$
+\sigma(s) =  2^{s/S}\sigma_0
+$$
+通过降采样可以得到降采样图片获得类似 $\sigma_s =2\sigma_{s-1}$ 的效果。对每一层进行降采样，可以降低运算量。
+
+如对图片进行两次高斯核运算 $\sigma_1, \sigma_2$，则其等于直接进行一个 $\sqrt{\sigma_1^2 + \sigma_2^2}$ 高斯核的运算。
+
+> 通常来说，越大的标准差也对应越大的图片。
+
+<img src="./img/lec8/1413304-20190907195045870-1055173565.png" style="width:80%;" />
+
+#### DOG Pyramid
+
+<img src="./img/lec8/image-20241104115408070.png" alt="" style="width:50%;" />
+
 ![](./img/lec8/20191218094643.png)
 
-我们把图片扩大一倍，并构建高斯金字塔。
+构建高斯金字塔，通常使用 LoG，而使用 DoG 进行近似。对每组 Octave 进行差分（每一level 两两相 substracte），可得 DOG 金字塔。
 
-将图像进行高斯模糊的到的 Octave 0 Level 0 图像设为 **基准图像**，设其尺度为 $\sigma_0$，称之为**基准层尺度**。第 0 组第 1 层尺度为 $k \sigma_0$，第二层尺度为 $k^2\sigma_1$ 以此类推。
+### 确定 Candidate Keypoint
 
-Octave 1 Level 0 的图像是由图像倒数第三张图片采样得到，若令 $k=2^{1/s}$，则其
+增加 $\sigma$ 可以提高robustness，但计算成本也很高。实验表明，在每个 octave 采样 3 个 scales 时，重复性最高。
+检测 scale 空间中DoG 的 Maxima & Minima。
+将每个点与当前图像和上下尺度中的 26 个邻近点进行比较
 
-对于 Octave $o$ Level $l$：
+![image-20241104000729159](./img/lec8/image-20241104000729159.png)
+
+**确定关键点：**关键点是由 DOG 空间局部极值点组成，为寻找极值点，需要比较每一个像素点于其相邻点比较，看是否为极大值。
+
+即找到 DOG 中的极值。
+
+### Step 2: Keypoint Localisation
+
+#### 确定 Candidate
+
+对于每个候选关键点，使用附近数据的插值法来准确确定其位置和比例。这可以通过拟合 DoG Scale space 函数的二次泰勒扩展来实现，该扩展经过 shift，使原点位于样本点处
+
+
+
+<img src="./img/lec8/image-20241104002302036.png" style="width:50%;" />
+
+考虑图片是一个离散的空间，则需要对其进行修正。我们需要对三维进行拟合 $\mathbf{x} = [x, y, \sigma]$
+
+如考虑图片DOG 值为函数 $f(x)$
 $$
-\sigma = 2^ok^r\sigma_0\\
-\text{where } o = 0, 1, 2, 3,\cdots; r = 0, 1, 2, \cdots, s+2
+\begin{align*}
+D(x)& \approx D(x_0) + D'(x_0)(x-x_0) + \frac{1}{2}D''(x_0)(x-x_0)^2
+\\
+\frac{d D}{dx} &= D'(x_0) + \frac{1}{2}D''(x_0)\cdot2(x-x_0)\\
+&= D'(x_0) + D''(x_0)(x-x_0)
+\\
+x &= x_0 -\frac{D'(x_0)}{D''(x_0)}
+\\
+x_{n+1} &= x_n -\frac{D'(x_n)}{D''(x_n)}
+\end{align*}
+$$
+如考虑多元，则可获得：
+$$
+\begin{align*}
+D(\mathbf{x})& \approx D(\mathbf{x}_0) + \nabla D(\mathbf{x})^T(\mathbf{x} -\mathbf{x}_0) + \frac{1}{2}(\mathbf{x}-\mathbf{x}_0)^T\mathbf{H}_f(\mathbf{x}-\mathbf{x}_0)
+\\
+&=D(\mathbf{x}_0) + \nabla D(\mathbf{x})^T\hat{\mathbf{x}} + \frac{1}{2}\hat{\mathbf{x}}^T\mathbf{H}_D\hat {\mathbf{x}}
+\\
+\frac{\part D}{\part \mathbf{x}} &= \nabla D(\mathbf{x}) + \mathbf{H}_D\hat{\mathbf{x}} = 0\\
+\hat{\mathbf{x}} &= - \nabla D(\mathbf{x})\mathbf{H}_D^{-1}
+\end{align*}
+$$
+极值位置的偏移量 $\hat{\mathbf{x}}$ 是通过求该函数相对于 X 的导数并将其设为 0 来。（牛顿法求极大值）
+
+如果offset $\hat{\mathbf{x}}$ 在任意dimension大于0.5，这意味着极值更接近不同的样本点，并且重复该过程（迭代）。
+
+可以看作一个 IRLS 的过程。通过多次迭代，得到极值点位置。确定备选 Keypoint 的 Localisation。
+$$
+\hat{\mathbf{x}} = \mathbf{x} - \mathbf{x}_0 = \begin{bmatrix} x-x_0\\y-y_0\\\sigma-\sigma_0 \end{bmatrix}
 $$
 
 
-![](./img/lec8/1413304-20190907195045870-1055173565.png)
+#### 去除边缘效应 i.e. 筛选结果
+
+检测到的一些关键点位于边缘，或者 contract 不够。在这两种情况下，它们都不如特征有用，应该被消除。
+
+- 如果极值的 DoG 值小于阈值（例如 0.03），则拒绝该关键点
+  $$
+  |D(\mathbf{x}')| < 0.03
+  $$
+
+
+
+位于图像边缘的关键点在边缘两侧的 principal curvature 大，而沿边缘的 principal curvature 较小。相反，一个定义明确的 kp 在两个方向上的 principal curvature 都很大。找到这些 principal curvature 相当于求解二阶 Hessian 矩阵的特征值。
+
+如考虑对点 $(x, y)$ 的 Hessian Matrix $\mathbf{H}_{x, y}$，考虑其表示 $x$ 和 $y$ 方向上的曲率，而我们不希望 $x, y$ 曲率差异过大（即边缘情况），因此要算两个方向的曲率。
+$$
+\mathbf{H}_{x, y} = \begin{bmatrix}
+\frac{\part^2 f}{\part x^2} & \frac{\part^2 f}{\part x \part y} \\
+\frac{\part^2 f}{\part y \part x} & \frac{\part^2 f}{\part y^2}
+\end{bmatrix}
+$$
+而考虑 Hessain 矩阵特征值正好于两个方向曲率成正比，因此则直接用其特征值 $\lambda_1, \lambda_2$ 当作曲率。
+
+而算矩阵特征值也很麻烦，因此用 $\text{tr} (\mathbf{H}) = \frac{\part^2 f}{\part x^2} +\frac{\part^2 f}{\part y^2}=\lambda_1+\lambda_2$ 与特征值 $\det \mathbf{H} = \lambda_1\lambda_2$
+
+令 $\lambda_1 > \lambda_2$ 且 $\lambda_1 = \gamma \lambda_2 (\gamma > 1)$
+
+而对于如下情况，舍去该点：
+
+1. $\det \mathbf{H}< 0$，即 $\lambda_1, \lambda_2$ 异号，遂差距较大。
+2. $\frac{\text{tr}^2 (\mathbf{H})}{\det \mathbf{H}} = \frac{(\lambda_1+\lambda_2)^2}{\lambda_1\lambda_2} = \frac{(\gamma \lambda_2+\lambda_2)^2}{\gamma\lambda_2^2}=\frac{(\gamma + 1)^2}{\gamma}$ 考虑函数几何特征，其为对勾函数，且极值点位于1，而位于 $(1, +\infty)$ 函数单增
+   如果期望 $\lambda_1$ 和 $\lambda_2$ 越接近，则期望 $\gamma\to 1$，也就是期望原函数取小值。
+   如果人工定义 $\gamma$ 的threshold 为 $\gamma_H$, 则有 $\frac{(\gamma + 1)^2}{\gamma} < \frac{(\gamma_H + 1)^2}{\gamma_H}$ 这样的阈值。
+   即如果超过这个阈值（$\gamma_H$ i.e., $\frac{\text{tr}^2 (\mathbf{H})}{\det \mathbf{H}}\geq \frac{(\gamma_H + 1)^2}{\gamma_H}$），则舍去
+
+通过上述操作，获得特征点。
+
+### Step 3: Orientation Estimation / SIFT Descriptor
+
+每个关键点都有位置、比例和方向特征。为每个关键点周围的局部图像窗口计算Descriptor。
+
+考虑在经过上述操作，我们获得的 $[x, y, \sigma]$ 是连续数值，选择与其最近的数值的图像层。并以坐标 $(x, y)$ 为圆心画圆。对此空间进行梯度加权后统计梯度直方图。
+
+#### 基本构思
+
+- 对于 interest point 周围的 16×16 窗口（如下图所示为 8×8）
+- 计算边缘方向（每个像素的梯度角减去 90°）
+- 丢弃弱边缘（梯度magnitude阈值）
+- 创建存活边缘方向直方图 histogram
+
+<img src="./img/lec8/image-20241104010450468.png" style="width:70%;" />
+
+#### 完整思路
+
+- 将 16×16 窗口划分为 4×4 的单元格网格（为简单起见，下图显示了 8×8 窗口和 2×2 网格 
+- 计算每个单元格的方向直方图
+- 16 个单元格 * 8 个方向 = 128 维描述符
+
+<img src="./img/lec8/image-20241104122522870.png" style="width:70%;" />
+
+#### Invariance Property
+
+为在下述情况工作：
+
+- **不受强度值变化的影响 Robust to Intensity Value Changes**
+  - 使用梯度方向
+- **尺度不变 Scale Invariant**
+  - 使用 scale space 极值检测来估计尺度 
+  - 根据发现点的尺度来调整窗口大小
+  - 根据该比例计算高斯平滑后的梯度
+- **要与方向无关 Orientation-Invariant**
+  - 使用邻域中的 **Dominant Orientation（主要方向）**旋转梯度方向。
+
+### Dominant Orientation
+
+![](./img/lec8/image-20241104123343974.png)
+
+将Magnitude最高的方向定位主方向。第二高Magnitude 如达到主方向的 80%，则称其为副方向。
+
+![](./img/lec8/image-20241104124625760.png)
+
+Magnitude $m(x, y)$ 和角度 $\sigma(x, y)$ 可以由以下公式计算：
+$$
+\begin{align}
+m(x, y) &=\sqrt{[L(x+1, y)-L(x-1, y)]^2+ [L(x, y+1)-L(x, y-1)]^2}\\
+\theta(x, y) &= \text{atan2} \frac{L(x, y+1)-L(x, y-1)}{L(x+1, y)-L(x-1, y)}
+\end{align}
+$$
+至此，我们有关键点的位置 $(x, y)$ 和方向。
+
+
+
+### SIFT Descripter's Matching Property
+
+- Robus，可应对Viewpoint 的变化
+  - 最多可在平面外旋转约 60 度
+
+- 可处理光照的 significant 变化
+- 快速高效，可实时运行
+- 其他变体，如 SURF、PCA SIFT、GLOH（梯度位置-方向直方图）
+
+![](./img/lec8/image-20241104124911887.png)
+
+
+
+## SURF:  Speeded Up Robust Features
+
+工作原理是对多尺度图像应用 approximate Gaussian second derivative mask，并利用 Hessian 矩阵找到兴趣点
+
+> 近似高斯二阶导数掩模
+>
+> 我们通常使用离散的高斯mask近似形式。最常见的近似掩模是：
+> $$
+> \begin{bmatrix}
+> 1 & -2 & 1
+> \end{bmatrix}
+> $$
+> $$
+> \begin{bmatrix}
+> 1 & 0& -2 & 0 & 1
+> \end{bmatrix}
+> $$
+> 
+
+<img src="./img/lec8/image-20241104125831204.png" style="width:50%;" />
+
+<img src="./img/lec8/image-20241104125856056.png" style="width:50%;" />
+$$
+\mathbf{H}_\text{approx} = \begin{bmatrix}
+D_{xx} & D_{xy} \\
+D_{yx} & D_{yy}
+\end{bmatrix}\\
+\det \mathbf{H}_\text{approx} = D_{xx}D_{yy} - (0.9 D_{xy})^2
+$$
+
+- 由于使用 integral images 进行图像卷积，该方法的速度非常快
+- 由于使用的是 integral images，因此可以高速应用任何尺寸的滤波器
+- 关键点的检测是根据 3×3×3 阵列中 Hessian 矩阵行列式的局部最大值进行的，这与 LoG 或 DoG 比例空间中的关键点检测类似
 
 
 
