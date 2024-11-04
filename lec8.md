@@ -250,7 +250,12 @@ $$
 
 工作原理是对多尺度图像应用 approximate Gaussian second derivative mask，并利用 Hessian 矩阵找到兴趣点
 
-> 近似高斯二阶导数掩模
+> **为什么 SURF 比 SIFT 更快？**
+>
+> SURF 使用 Box Filter 近似 SIFT DOG
+> 使用 Harr 小波近似后面的Orientation Estimation
+
+> **近似高斯二阶导数掩模**
 >
 > 我们通常使用离散的高斯mask近似形式。最常见的近似掩模是：
 > $$
@@ -263,11 +268,11 @@ $$
 > 1 & 0& -2 & 0 & 1
 > \end{bmatrix}
 > $$
-> 
+
 
 <img src="./img/lec8/image-20241104125831204.png" style="width:50%;" />
 
-<img src="./img/lec8/image-20241104125856056.png" style="width:50%;" />
+上为高斯核，下面为近似高斯核。
 $$
 \mathbf{H}_\text{approx} = \begin{bmatrix}
 D_{xx} & D_{xy} \\
@@ -280,6 +285,57 @@ $$
 - 由于使用的是 integral images，因此可以高速应用任何尺寸的滤波器
 - 关键点的检测是根据 3×3×3 阵列中 Hessian 矩阵行列式的局部最大值进行的，这与 LoG 或 DoG 比例空间中的关键点检测类似
 
+<img src="./img/lec8/image-20241104125856056.png" style="width:50%;" />
+
+而对于scale ，我们不去做 DoG差分金字塔，而是直接放大 filter
+$$
+I_\Sigma(x, y) = \sum_{i=0}^{i\leq x}\sum_{j=0}^{j\leq y} I(i, j)
+$$
+图 $I(x, y)$ 的 Integeral Image $I_\Sigma(x, y)$ 是 $(0, 0) - (x, y)$​ 形成的矩形区域内的像素总和。
+
+<img src="./img/lec8/image-20241104215913232.png" style="width:50%;" />
+
+使用积分图像，只需四个数组引用就能计算出任意大小矩形区域的像素总和
+$$
+S = A-B-C+D
+$$
+
+### Descriptor
+
+估算关键点的SURF描述子的步骤：
+
+<img src="./img/lec8/image-20241104220537306.png" style="width:50%;" />
+
+1. 将关键点周围取一个 $20\times scale$ 尺寸的图像窗口，将其拆分成 $4\times 4$ 的子区域
+
+2. 在每个子区域计算计算 Haar wavelet 小波（Haar小波响应）
+
+   * 水平方向响应 $d_x$​，垂直方向响应 $d_y$
+   * 在每个子区域中选取5×5个规律间隔的采样点来计算响应
+
+3. 在每个子区域：
+
+   * 在25个采样点(5×5)处计算dx和dy
+
+   * 对所有25个点求和得到4个值
+     $$
+     \text{SURF}= (d_x, d_y, |d_x|, |d_y|)
+     $$
+
+4. 最终得到一个64维的描述子向量（$4\times 16=64$​）
+
+5. 比 SIFT 快 3 倍
+
+### Shape Context Descriptor
+
+![image-20241104221127230](./img/lec8/image-20241104221127230.png)
+
+- Shape Context Descriptor通过估计边缘点位置和方向的2D直方图来工作
+- 位置信息使用对 **log-polar coordinate system** 被 quantised 为5个区间
+- Orientation 被量化为12个区间
+- Descriptor 的计算是通过统计每个区间内的点数来完成的
+- 对数极坐标分箱的好处是：对近处的点提供更高的精度，对远处的点提供更多的灵活性
+
 
 
 ## Image Processing with Local Feature
@@ -287,7 +343,7 @@ $$
 1. **Detection**：寻找一系列 distictive key points
 
 2. **Description**：以向量形式提取每个兴趣点周围的特征描述。
-   ![](./img/lec8/image-20241031044544878.png)
+   <img src="./img/lec8/image-20241031044544878.png" style="width:50%;" />
 
 3. **Matching**：计算特征向量之间的距离，找到对应关系。
    $$
@@ -338,7 +394,7 @@ $$
 - 由于某些特征可能无法匹配（例如，由于遮挡），因此仍可使用阈值来减少误报的数量
 - 非特征点可能有很多近似匹配点，但其中只有一个是正确的
 
-#### Nearest Neighbour Distance Ratio
+#### Nearest Neighbour Distance Ratio (NNDR)
 
 <img src="./img/lec8/image-20241031044825562.png" style="width:50%;" />
 
