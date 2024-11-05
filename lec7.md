@@ -407,6 +407,19 @@ $$
 
 我们也称第二个式子为 Harris Corner Response Function。
 
+> **为什么我们可以用 $\det$ 和 $\text{trace}$  去近似?**
+> $$
+> \mathbf{M} = \begin{bmatrix}
+> I_{xx} & I_{xy} \\
+> I_{yx} & I_{yy}
+> \end{bmatrix}
+> $$
+> 我们用 $\det M$ 去近似 $\lambda_x\lambda_y$ 是因为我们可以将 $M$ 进行特征值分解 $P\Lambda P^T$，其 $\Lambda$ 就是对角线相乘，而 $\det$ 是对角线相乘 - 逆对角线。对于几何来说，$\det$ 可以理解为以下椭圆的面积。
+>
+> <img src="./img/lec7/image-20241029031315054.png" alt="" style="width:30%;" />
+>
+> 而如上，用 trace 近似（即对角线相加）。
+
 ### Shi-Tomasi Corner Detector
 
 <img src="./img/lec7/image-20241029032646303.png" alt="" style="width:80%;" />
