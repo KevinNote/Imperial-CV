@@ -693,6 +693,56 @@ Harris 算子返回角点所在 Interest Point。但是，为了定义兴趣点�
 > $$
 > 保证了同一特征在不同尺度下会得到相同的响应值。
 
+> **LoG 是 Rotation Invarient**
+>
+> 我来解释为什么拉普拉斯高斯算子(Laplacian of Gaussian, LoG)具有旋转不变性。让我通过数学推导来说明这一点。
+>
+> 
+>
+> LoG算子的旋转不变性可以从以下几个方面来证明:
+>
+> 首先，高斯函数本身具有旋转对称性:
+> $$
+> G(x,y) = \frac{1}{2\pi\sigma^2}e^{-\frac{x^2 + y^2}{2\sigma^2}}
+> \\
+> \begin{cases}
+> x' = x\cos\theta - y\sin\theta\\
+> y' = x\sin\theta + y\cos\theta\\
+> \end{cases}
+> \\
+> 
+> G(x',y') = \frac{1}{2\pi\sigma^2}e^{-\frac{x'^2 + y'^2}{2\sigma^2}}
+> \\
+> x'^2 + y'^2 = (x\cos\theta - y\sin\theta)^2 + (x\sin\theta + y\cos\theta)^2
+> =x^2+y^2
+> $$
+> 注意到高斯函数只依赖于 $$x^2 + y^2$$,这是到原点的距离的平方。无论坐标系如何旋转,这个距离保持不变。
+>
+> 拉普拉斯算子在二维情况下定义为:
+> $$
+> \nabla^2 = \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2}
+> $$
+> 当我们将拉普拉斯算子应用到高斯函数时，得到LoG:
+> $$
+> \nabla^2G = \frac{\partial^2G}{\partial x^2} + \frac{\partial^2G}{\partial y^2}
+> = \frac{1}{2\pi\sigma^4}\left(2-\frac{x^2+y^2}{\sigma^2}\right)e^{-\frac{x^2+y^2}{2\sigma^2}}
+> $$
+> 
+>
+> 关键点在于：拉普拉斯算子本身就是旋转不变的。这是因为:
+>
+> - 拉普拉斯算子可以用极坐标表示: $$\nabla^2 = \frac{\partial^2}{\partial r^2} + \frac{1}{r}\frac{\partial}{\partial r}$$
+> - 这个形式只依赖于径向距离 $r$，与角度 $\theta$ 无关
+>
+> 因此,当我们将旋转不变的拉普拉斯算子应用到旋转对称的高斯函数上时，得到的LoG算子也必然具有旋转不变性。
+>
+> 实际意义:
+> - 这意味着LoG对图像中的边缘和斑点的响应与它们的方向无关
+> - 无论图像旋转多少角度，LoG的响应都保持不变
+> - 这使得 LoG 成为一个非常有用的图像特征检测算子
+>
+> 这种旋转不变性在计算机视觉应用中非常重要,因为它允许我们检测图像中的特征,而不用担心它们的方向。
+
 <img src="./img/lec7/1_pEbxpmbEe1NGKLJThdWmRw.png" style="width:67%;" />
 
 
