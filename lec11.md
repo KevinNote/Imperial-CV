@@ -35,6 +35,18 @@
 
 ![](./img/lec11/image-20241105025126579.png)
 
+> 这里假设深度为 $d$
+>
+> 如考虑像素点在 $(x_1, y_1, d_1)$ 其位于深度 $d_2$ 的像素点为 $(x_2, y_2, d_2)$
+>
+> 根据小孔原理，我们知晓
+> $$
+> \begin{align*}
+> \frac{x_1}{d_1} &= \frac{x_2}{d_2}\\
+> x_1 &= x_2\frac{d_1}{d_2}
+> \end{align*}
+> $$
+
 #### Pixel Coordinates
 
 <img src="./img/lec11/image-20241105025353018.png" alt="" style="width:50%;" />
