@@ -1,5 +1,9 @@
 # Lecture 12: Computational Stereo I
 
+> 参阅 https://www.cnblogs.com/xiejb2430/p/16894157.html
+>
+> 参阅 https://zhuanlan.zhihu.com/p/33458436
+
 
 
 ![](./img/lec12/image-20241106033650728.png)
