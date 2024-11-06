@@ -124,7 +124,7 @@ $$
 如考虑多元，则可获得：
 $$
 \begin{align*}
-D(\mathbf{x})& \approx D(\mathbf{x}_0) + \nabla D(\mathbf{x})^T(\mathbf{x} -\mathbf{x}_0) + \frac{1}{2}(\mathbf{x}-\mathbf{x}_0)^T\mathbf{H}_f(\mathbf{x}-\mathbf{x}_0)
+D(\mathbf{x})& \approx D(\mathbf{x}_0) + \nabla D(\mathbf{x})^T(\mathbf{x} -\mathbf{x}_0) + \frac{1}{2}(\mathbf{x}-\mathbf{x}_0)^T\mathbf{H}_D(\mathbf{x}-\mathbf{x}_0)
 \\
 &=D(\mathbf{x}_0) + \nabla D(\mathbf{x})^T\hat{\mathbf{x}} + \frac{1}{2}\hat{\mathbf{x}}^T\mathbf{H}_D\hat {\mathbf{x}}
 \\

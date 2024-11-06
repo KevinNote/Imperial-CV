@@ -51,10 +51,62 @@
 
 <img src="./img/lec11/image-20241105025353018.png" alt="" style="width:50%;" />
 
+$(x_{pix}, y_{pix})$ 是像素坐标系, $(x, y)$ 是图像平面坐标系
+
+从3D空间点到2D图像平面的投影：
+$$
+\begin{cases}
+x_i = x_s(f/z_s)\\
+y_i = y_s(f/z_s)
+\end{cases}
+\longleftrightarrow
+\begin{cases}
+x_i = f(x_s/z_s)\\
+y_i = f(y_s/z_s)
+\end{cases}
+$$
+从图像坐标到像素坐标的转换：
+$$
+\begin{cases}
+x_{pix} = k_x\cdot x_i + x_0\\
+y_{pix} = k_y\cdot y_i + y_0
+\end{cases}
+\longleftrightarrow
+\begin{cases}
+x_{pix} = k_x f \frac{x_s}{z_s} + x_0\\
+y_{pix} = k_y f \frac{y_s}{z_s} + y_0
+\end{cases}
+$$
+$k_x$ 和 $k_y$ 是比例系数
+
+> 我们可以认为 $x_{pix}$ 是相对位置
+
+引入 $\alpha$ 参数简化表达：
+$$
+\begin{cases}
+\alpha_x = f \cdot k_x\\
+\alpha_y = f\cdot k_y
+\end{cases}
+\longrightarrow
+\begin{cases}
+x_{pix} = \alpha_x \frac{x_s}{z_s} + x_0\\
+y_{pix} = \alpha_y \frac{y_s}{z_s} + y_0
+\end{cases}
+\longleftrightarrow
+\begin{cases}
+x_{pix} = \frac{\alpha_x x_s + z_s x_0}{z_s}\\
+y_{pix} = \frac{\alpha_y y_s + z_s y_0}{z_s}
+\end{cases}
+$$
+
 - 像素坐标的原点通常位于传感器阵列的一个角落(例如左上角或左下角)
 - CCD/CMOS像素可能不是正方形的(由于水平/垂直方向上的间距不等)
 - 还可能存在倾斜因素和镜头畸变(枕形效应)，这些都会影响3D物体投影到不同的像素坐标上
 - 使用普通坐标系比较笨拙，让我们改用 Homogeneous Coordinates齐次坐标系
+
+> CCD/CMOS传感器的像素可能不是正方形的
+> 可能存在镜头畸变（如枕形畸变）
+> 建议使用齐次坐标来简化计算
 
 #### Homogeneous Coordinates
 
@@ -68,3 +120,70 @@
 
 ![](./img/lec11/image-20241105025734455.png)
 
+$$
+\underbrace{
+\begin{cases}
+u = f x_s \\
+v = f y_s \\
+w = 1 z_s
+\end{cases}
+\leftrightarrow
+\begin{cases}
+u = f x_s \\
+v = f y_s \\
+w = z_s
+\end{cases}
+}_\text{Homogeneous Coordinates}
+
+\longleftrightarrow
+
+\underbrace{
+\begin{cases}
+x_i = u / w\\
+y_i = v / w
+\end{cases}
+\leftrightarrow
+\begin{cases}
+x_i = f(x_s/z_s)\\
+y_i = f(y_s/z_s)
+\end{cases}
+}_\text{Eucilidean Coordinates}
+$$
+如上我们可以用齐次方程表示相对位置 $(x_i, y_i)$
+
+![image-20241105234740152](./img/lec11/image-20241105234740152.png)
+
+而对于 General Projection可以用上式表达：
+$$
+\underbrace{
+\begin{cases}
+u = \alpha_x x_s + x_0z_s \\
+v = \alpha_y y_s + y_0z_s \\
+w = z_s
+\end{cases}
+}_\text{Homogeneous Coordinates}
+
+\longleftrightarrow
+
+\underbrace{
+\begin{cases}
+x_{pix} = u / w\\
+y_{pix} = v / w
+\end{cases}
+\leftrightarrow
+\begin{cases}
+x_{pix} = \frac{\alpha_x x_s + z_s x_0}{z_s} & \alpha_x = f \cdot k_x\\
+y_{pix} = \frac{\alpha_y y_s + z_s y_0}{z_s} & \alpha_y = f \cdot k_y
+\end{cases}
+}_\text{Eucilidean Coordinates}
+$$
+![](./img/lec11/image-20241105235817322.png)
+
+对于一个 Horizontal Skew，考虑其系数矩阵有 5 个变量 $\alpha_x, s, x_0, \alpha_y, y_0$，因此其有 5 个 DoF
+
+我们可以将上述系数矩阵进行简写：
+$$
+\begin{bmatrix}
+\alpha_x & s & x_0 & \alpha_y, y_0
+\end{bmatrix}
+$$
