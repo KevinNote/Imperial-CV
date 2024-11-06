@@ -87,6 +87,8 @@ $$
 
 > **Cross Product**
 >
+> 从几何角度，向量 $a \times b$ 会获得 $ab$ 平面的法向量
+>
 > $[\mathbf{a}_\times]$ 表示向量 $\mathbf{a}$ 的斜对称矩阵（skew-symmetric matrix）形式
 > $$
 > \mathbf{a} \times \mathbf{b} = [\mathbf{a}]_\times \mathbf{b}
@@ -108,6 +110,8 @@ $$
 - 对于第一视图中的点$x$，$Fx$ 给出第二视图中的对应极线
 - 它不依赖于场景结构，只依赖于相机的相对位置和内部参数
 - 这是计算机视觉中进行立体匹配和3D重建的基础
+
+如果点 $x'$ 在极对线 $l'$ 上，则有 $x' \cdot l' = x'^TFx=0$
 
 Fundamental Matrix 满足一些条件：
 

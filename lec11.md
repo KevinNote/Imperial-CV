@@ -4,6 +4,8 @@
 
 ## Camera Models
 
+> 参阅 https://www.cnblogs.com/ymzcch12/p/18244362
+
 摄像机是三维世界和二维图像之间的映射，二维图像由 projection matrix (投影矩阵)表示。
 
 主要的 projection model有
@@ -325,6 +327,7 @@ t_x\\t_y\\t_z
 $$
 
 $$
+\begin{align}
 \begin{bmatrix}
 i\cdot I & i \cdot J & i \cdot K\\
 j\cdot I & j \cdot J & j \cdot K\\ 
@@ -337,18 +340,37 @@ X\\Y\\Z
 \begin{bmatrix}
 t_x\\t_y\\t_z
 \end{bmatrix}
-= \mathbf{R}\begin{bmatrix}
+
+&= \mathbf{R}_{3\times 3}\begin{bmatrix}
 X\\Y\\Z
-\end{bmatrix} + \mathbf{t}
-=
+\end{bmatrix} + \mathbf{t}_{3\times 1}
+\\&=
 \begin{bmatrix}
 \mathbf{R} & \mathbf{t}\\
-\mathbf{0} & \mathbf{1}\\
-\end{bmatrix}
+\end{bmatrix}_{3\times 4}
 \begin{bmatrix}
 X\\Y\\Z\\1
 \end{bmatrix}
+
+\\
+&=
+\begin{bmatrix}
+\mathbf{R} & \mathbf{t}\\
+\mathbf{0} & 1\\
+\end{bmatrix}_{4\times 4}
+\begin{bmatrix}
+X\\Y\\Z\\1
+\end{bmatrix}
+
+\end{align}
 $$
+
+> 从运算的角度来看，3×4 矩阵就足够完成原始的变换操作。但是添加第四行 [0 1] 有几个重要原因：
+>
+> 1. 可逆性：4×4 矩阵是可逆的，而 3×4 矩阵不是
+> 2. 矩阵连接：当需要连续进行多个变换时，4×4 矩阵可以直接相乘
+> 3. 保持齐次性：确保输出向量的第四个分量保持为 1
+> 4. 代数完备性：形成了完整的齐次变换群
 
 如考虑calibration matrix $\mathbf{K}$，在齐次坐标系和相机坐标系：
 $$
@@ -428,6 +450,17 @@ $$
 
 - $C$ 是投影中心（相机光心）
 - $\lambda$ 是任意标量参数
+
+```mermaid
+flowchart LR
+  w[World 𝒳<br>X, Y, Z]
+  c[Camera<br>Image 𝓍<br>x, y, z]
+  h[Homogeneous 𝓊<br>u, v, w]
+  w --"[R | t]"--> c
+  c --"K[I | 0]"--> h
+  w --P--> h
+  h --P+--> w
+```
 
 ### Property of Perspective Projection
 
@@ -630,9 +663,9 @@ $$
 
 > 透视投影会导致远处的物体看起来更小，近处的物体看起来更大
 >
-> 通过除以Z（归一化），我们得到的是物体在标准化平面上的投影坐标
+> 通过除以 $Z$（归一化），我们得到的是物体在标准化平面上的投影坐标
 >
-> 这个标准化平面通常被称为"归一化图像平面"，位于相机坐标系中Z=1的位置
+> 这个标准化平面通常被称为"归一化图像平面"，位于相机坐标系中 $Z=1$ 的位置
 
 $k_1, k_2$ 是径向畸变系数
 
@@ -642,8 +675,7 @@ u_d = fx_d + u_o
 \\
 v_d = fy_d + v_o
 $$
-$f$ 是焦距 focal length
-$(u_0, v_0)$ 是主点坐标
+$f$ 是焦距 focal length, $(u_0, v_0)$ 是主点坐标
 
 这个模型能够处理桶形畸变(k < 0)和枕形畸变(k > 0)两种常见的径向畸变情况。它通过低阶多项式来近似描述镜头的非线性畸变效果。
 
