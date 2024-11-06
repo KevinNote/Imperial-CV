@@ -43,7 +43,7 @@ L(x, y, \sigma) = G(x, y, \sigma) * I(x, y)
 $$
 高斯金字塔本质上是信号的在不同尺度上的表达，即将同一图片多次进行高斯模糊，并向下采样，产生不同尺度下的多组信号或图片以进行后续的处理。
 
-<img src="./img/lec8/20191217150618.png" alt="img" style="width:50%;" />
+<img src="./img/lec8/20191217150618.png" alt="img" style="width:40%;" />
 
 对于层级 $G_{i+1}$ 的金子塔，有：
 
@@ -84,7 +84,7 @@ $$
 检测 scale 空间中DoG 的 Maxima & Minima。
 将每个点与当前图像和上下尺度中的 26 个邻近点进行比较
 
-![image-20241104000729159](./img/lec8/image-20241104000729159.png)
+<img src="./img/lec8/image-20241104000729159.png" alt="image-20241104000729159" style="width:20%;" />
 
 **确定关键点：**关键点是由 DOG 空间局部极值点组成，为寻找极值点，需要比较每一个像素点于其相邻点比较，看是否为极大值。
 
@@ -98,7 +98,7 @@ $$
 
 
 
-<img src="./img/lec8/image-20241104002302036.png" style="width:50%;" />
+<img src="./img/lec8/image-20241104002302036.png" style="width: 40%;" />
 
 考虑图片是一个离散的空间，则需要对其进行修正。我们需要对三维进行拟合 $\mathbf{x} = [x, y, \sigma]$
 
@@ -210,11 +210,11 @@ $$
 
 ### Dominant Orientation
 
-![](./img/lec8/image-20241104123343974.png)
+<img src="./img/lec8/image-20241104123343974.png" style="width:75%;" />
 
 将Magnitude最高的方向定位主方向。第二高Magnitude 如达到主方向的 80%，则称其为副方向。
 
-![](./img/lec8/image-20241104124625760.png)
+<img src="./img/lec8/image-20241104124625760.png" style="width:75%;" />
 
 Magnitude $m(x, y)$ 和角度 $\theta(x, y)$ 可以由以下公式计算：
 $$
@@ -236,7 +236,7 @@ $$
 - 快速高效，可实时运行
 - 其他变体，如 SURF、PCA SIFT、GLOH（梯度位置-方向直方图）
 
-![](./img/lec8/image-20241104124911887.png)
+<img src="./img/lec8/image-20241104124911887.png" style="width:67%;" />
 
 
 
@@ -279,7 +279,7 @@ $$
 - 由于使用的是 integral images，因此可以高速应用任何尺寸的滤波器
 - 关键点的检测是根据 3×3×3 阵列中 Hessian 矩阵行列式的局部最大值进行的，这与 LoG 或 DoG 比例空间中的关键点检测类似
 
-<img src="./img/lec8/image-20241104125856056.png" style="width:50%;" />
+<img src="./img/lec8/image-20241104125856056.png" style="width:40%;" />
 
 而对于scale ，我们不去做 DoG差分金字塔，而是直接放大 filter
 $$
@@ -298,7 +298,7 @@ $$
 
 估算关键点的SURF描述子的步骤：
 
-<img src="./img/lec8/image-20241104220537306.png" style="width:50%;" />
+<img src="./img/lec8/image-20241104220537306.png" style="width:27%;" />
 
 1. 将关键点周围取一个 $20\times scale$ 尺寸的图像窗口，将其拆分成 $4\times 4$ 的子区域
 
@@ -322,7 +322,7 @@ $$
 
 ### Shape Context Descriptor
 
-![image-20241104221127230](./img/lec8/image-20241104221127230.png)
+<img src="./img/lec8/image-20241104221127230.png" alt="" style="width:67%;" />
 
 - Shape Context Descriptor通过估计边缘点位置和方向的2D直方图来工作
 - 位置信息使用对 **log-polar coordinate system** 被 quantised 为5个区间
