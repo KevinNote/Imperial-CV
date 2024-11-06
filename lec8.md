@@ -14,8 +14,6 @@
 
 ## SIFT Descriptor 尺度不变特征变换
 
-> 参阅 https://www.youtube.com/watch?v=NPcMS49V5hg
-
 ### Steps Overview
 
 1. **Scale-space Extrema Detection**
@@ -32,10 +30,6 @@
 ### Step 1: Scale Space Extrema Detection
 
 #### Gaussian Pyramid
-
-> 参阅 https://jiangren.work/2019/08/10/%E9%AB%98%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94%E4%B8%8E%E6%8B%89%E6%99%AE%E6%8B%89%E6%96%AF%E9%87%91%E5%AD%97%E5%A1%94/
->
-> 参阅 https://www.bilibili.com/video/BV13v411E7M7/
 
 高斯核是唯一可以产生多尺度（依赖 $\sigma$）的核。
 
@@ -222,7 +216,7 @@ $$
 
 ![](./img/lec8/image-20241104124625760.png)
 
-Magnitude $m(x, y)$ 和角度 $\sigma(x, y)$ 可以由以下公式计算：
+Magnitude $m(x, y)$ 和角度 $\theta(x, y)$ 可以由以下公式计算：
 $$
 \begin{align}
 m(x, y) &=\sqrt{[L(x+1, y)-L(x-1, y)]^2+ [L(x, y+1)-L(x, y-1)]^2}\\
@@ -315,7 +309,7 @@ $$
 
 3. 在每个子区域：
 
-   * 在25个采样点(5×5)处计算dx和dy
+   * 在25个采样点(5×5)处计算 $d_x$ 和 $d_y$
 
    * 对所有25个点求和得到4个值
      $$
