@@ -65,6 +65,8 @@ Epipolar 几何是两个视角之间的内在投影几何关系。
 
 ![](./img/lec12/epipolar.png)
 
+
+
 ![image-20241106035606415](./img/lec12/image-20241106035606415.png)
 
 **极点(Epipole)**: e'是相机中心C在第二个视图平面上的投影
